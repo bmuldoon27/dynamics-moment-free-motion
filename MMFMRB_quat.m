@@ -399,4 +399,99 @@ function [fig1, fig2, fig3] = MMFMRB_quat(dimensions,IC,T)
         % writeVideo(animation, getframe(gcf));
 
     end
+    
+    %% Create the 3 plot animations for rotations.berkeley.edu website
+    % {Plot 1: Angle of Rotation over Time} 
+    % {Plot 2: Axis of rotation, and instantaneous ang. vel. dir. over
+    % time}
+    % {Plot 3: Evolution of the corotational basis vectors over time.}
+
+    phi = 2*acos(e0);
+    
+    iter0 = 1;
+    iter = iter0;
+
+    rwp = figure('Renderer', 'painters', 'Position', [100 100 800 200]);
+    imageDirectory='gif_figures_asym';
+    % setup sub plot 1
+    subplot(1,3,1);
+    plot(T(iter0),phi(iter0),'-b','Linewidth',1); hold on;
+    xlim([0,max(T)]); ylim([min(phi), max(phi)]);
+
+    while iter <= length(e0) % step through time and plot data at each snap
+        % plot on the first figure axes
+        subplot(1,3,1);
+        plot(T(iter0:iter), phi(iter0:iter),'-b','Linewidth',2); drawnow;
+        hold on;
+        plot(T(iter), phi(iter),'o','MarkerFaceColor','b');
+        xlim([0,max(T)]); ylim([0.875*min(phi), 1.125*max(phi)]); 
+        grid on;
+        xl1=xlabel('Time');
+        yl1=ylabel('$\phi$','rotation',0);
+        set(xl1,'Interpreter','Latex','Fontsize',15);
+        set(yl1,'Interpreter','Latex','Fontsize',15);
+        set(gca,'TickLabelInterpreter','latex','fontsize',12)
+        
+        % plot on the second figure axes
+        sp2=subplot(1,3,2);
+        omegav = quiver3(0,0,0, omega_axis(1,iter), omega_axis(2,iter), omega_axis(3,iter),...
+        'b', 'LineWidth', 1,'AutoScale', 'off');
+        omegap = line(omega_axis(1,iter0:iter), omega_axis(2,iter0:iter), omega_axis(3,iter0:iter), 'Color', 'b', 'LineWidth', 1);
+        hold on; grid off;
+        rrv = quiver3(0,0,0, rr1(iter), rr2(iter), rr3(iter), 'r', 'LineWidth', 1,...
+        'AutoScale', 'off');
+        rrp = line(rr1(iter0:iter), rr2(iter0:iter), rr3(iter0:iter), 'Color','r', 'LineWidth', 1); % axis of rotation
+        axis([-1 1 -1 1 -1 1]);
+        xl2=xlabel('$\bf{E}_1$');
+        yl2=ylabel('$\bf{E}_2$');
+        zl2=zlabel('$\bf{E}_3$','rotation',0);
+        set(xl2,'Interpreter','Latex','Fontsize',12);
+        set(yl2,'Interpreter','Latex','Fontsize',12);
+        set(zl2,'Interpreter','Latex','Fontsize',12);
+        ax_axes= get(gca,'zlabel');
+        ax_axes_par = ax_axes.Parent;   % Important
+        set(ax_axes_par, 'XTick', -1:0.5:1)
+        set(ax_axes_par, 'YTick', -1:0.5:1)
+        set(ax_axes_par, 'ZTick', -1:0.5:1)
+        set(gca,'TickLabelInterpreter','latex','fontsize',12)
+
+        % plot on third axes
+        sp3=subplot(1,3,3);
+        % Draw the basis vectors 
+        eb1v = quiver3(0,0,0, eb1(1,iter), eb1(2,iter), eb1(3,iter), 'k', 'LineWidth', 1,...
+        'AutoScale', 'off'); hold on;
+        eb2v = quiver3(0,0,0, eb2(1,iter), eb2(2,iter), eb2(3,iter), 'k', 'LineWidth', 1,...
+        'AutoScale', 'off');
+        eb3v = quiver3(0,0,0, eb3(1,iter), eb3(2,iter), eb3(3,iter), 'k', 'LineWidth', 1,...
+        'AutoScale', 'off');
+
+        % Draw their tips' trajectories:
+         e1p = line(eb1(1,iter0:iter), eb1(2,iter0:iter), eb1(3,iter0:iter), 'Color', 'k', 'LineWidth', 1);
+         e2p = line(eb2(1,iter0:iter), eb2(2,iter0:iter), eb2(3,iter0:iter), 'Color', 'k', 'LineWidth', 1);
+         e3p = line(eb3(1,iter0:iter), eb3(2,iter0:iter), eb3(3,iter0:iter), 'Color', 'k', 'LineWidth', 1);
+        grid off; axis([-1 1 -1 1 -1 1]);
+        xl3=xlabel('$\bf{E}_1$');
+        yl3=ylabel('$\bf{E}_2$');
+        zl3=zlabel('$\bf{E}_3$','rotation',0);
+        set(xl3,'Interpreter','Latex','Fontsize',12);
+        set(yl3,'Interpreter','Latex','Fontsize',12);
+        set(zl3,'Interpreter','Latex','Fontsize',12);
+        ax_bv= get(gca,'zlabel');
+        ax_bv_par = ax_bv.Parent;   % Important
+        set(ax_bv_par, 'XTick', -1:0.5:1)
+        set(ax_bv_par, 'YTick', -1:0.5:1)
+        set(ax_bv_par, 'ZTick', -1:0.5:1)
+        set(gca,'TickLabelInterpreter','latex','fontsize',12)
+        
+  
+        % Say Cheese :D
+        saveas(rwp, num2str(iter-1, [imageDirectory, '/iter=%f.png']))
+
+        % Clear figs
+        for i = 1:1:3; subplot(1,3,i); clf; end % clear each 
+        
+        % time step iteration increase
+        iter = iter+1;
+    end
+
 end
