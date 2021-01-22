@@ -5,8 +5,8 @@ Contains a moment free motion of a rigid body visualization code for illustratio
 Users can visualize an animation of a rectangular body subject to initial conditions governing mass center position, mass center velocity, rigid body orientation, and angular velocity.
 
 Axisymmetric Body in Moment-free Motion
-![](axisym_motion.gif)
+![](axisym.gif)
 
 Asymmetric Body in Moment-free Motion
-![](asym_motion.gif)
+![](asym.gif)
 
